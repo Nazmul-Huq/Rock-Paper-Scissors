@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
@@ -9,26 +10,34 @@ public class RockPaperScissor {
         Scanner scanner = new Scanner(System.in);
 
         /*
-        winner get 1 point, if tied no point
-         each set consists of 3 individual move. Winner of a set will get 1 point, if tied no point
-        a total of 5 set will be played if players decided to play by set
+        //player can choose to play either against computer (name: Cyborg) or against another player.
+        //players can decide to calculate final result by either xx number of "individual move" or by xx number of "set"
+        //in both case they can decide how many move or set they like to play
+        // in each move winner get 1 point, if tied no point
+        // when getting results by "individual move", if final result get tied then they will play a penalty move until find a winner
+        // when playing by set:
+            //each set consists of 3 individual move. Winner of a set will get 1 point, if tied no point
+            //if the final result after xx number of set is tie, then they will play a penalty set until a winner is found
          */
 
         String firstPlayerName = ""; // variable to store name of players
         String secondPlayerName = "";
+
         String singleOrMultiPlayer = "";//to store decision of either play alone against computer  or multiplayer
+        String setOrIndividualMove = ""; //to store decision of either play by set or individual move
+
         int firstPlayerMoveScore = 0; // to store individual move score for each player.
         int secondPlayerMoveScore = 0;
+
         int firstPlayerSetScore = 0; // to store set score if players decided to get result by set instead of single move
         int secondPlayerSetScore = 0;
-        String setOrIndividualMove = ""; //to store decision of either play by set or individual move
+
         int numberOfSet = 0; // how many set players like to play
-        //by default each set consists of 3 individual move by each player.
-        //if player decided to get result by individual move, will change the value later in program
-        int numberOfIndividualMove = 0;
-        // get the individual move by players
-        String firstPlayerMove = "";
+        int numberOfIndividualMove = 0; //if player decided to get result by individual move, will change the value later in program
+
+        String firstPlayerMove = "";// get the individual move by players
         String secondPlayerMove = "";
+
 
         //ask if a player like to play against computer or someone else
         //multi = two players playing against each other. single = one player playing against computer.
@@ -38,7 +47,7 @@ public class RockPaperScissor {
 
         // if single player mood is chosen then ask first player name and set computer name to "Cyborg"
         // if multiplayer mood is chosen then  ask for both players name
-        switch (singleOrMultiPlayer){ //******************* may be can send a parameter in the method call and get result without writing too many code
+        switch (singleOrMultiPlayer){
             case "single":
                 firstPlayerName = getPlayerName();
                 System.out.println("Welcome " + firstPlayerName + " to RPS game");
@@ -57,17 +66,17 @@ public class RockPaperScissor {
         }
 
 
-        // ask if players want to get result based on "x" number of set or individual move
+        // ask if players want to get result based on xx number of set or individual move
         // base on player choice both variable "numberOfSet" and "numberOfIndividualMove" will be updated
         System.out.println("Do you like to get result by set or individual move");
         System.out.println("write 'set' or 'ind'");
         setOrIndividualMove = isSetOrIndividualMove();
         if (setOrIndividualMove.equals("ind")) {
-            numberOfSet = 1; // number of set is 1 as player decided to get result by individual move
+            numberOfSet = 1; // number of set is 1, as player decided to get result by individual move
             System.out.println("Hi "+ firstPlayerName + " and " + secondPlayerName + ", how many individual move you want to play");
             numberOfIndividualMove = scanner.nextInt();  //ask and get how many individual move players want to play
         } else {
-            numberOfIndividualMove = 3; // each set consists of 3 individual move
+            numberOfIndividualMove = 3; // each set consists of 3 individual move by default
             System.out.println("Hi "+ firstPlayerName + " and " + secondPlayerName + ", how many set you want to play");
             numberOfSet = scanner.nextInt();             //ask and get how many set players want to play
         }
@@ -77,18 +86,18 @@ public class RockPaperScissor {
         for (int i = 0; i < numberOfSet; i++) { // number of loop depends on players choice of set
             for (int j = 0; j < numberOfIndividualMove; j++) { // number of move depends on players choice of move
 
-                // get the player move
+                //get first player's move
+                System.out.println(firstPlayerName + ": play your hand: (r = rock, p = paper, s = scissor) ");
+                firstPlayerMove = getPlayerMove();
+
+                // get the second player's move (either computer in single mood or person in multiplayer mood)
                 switch (singleOrMultiPlayer){
                     case "single":
-                        System.out.println(firstPlayerName + ": play your hand: (r = rock, p = paper, s = scissor) ");
-                        firstPlayerMove = getPlayerMove();
                         System.out.println(secondPlayerName + ": play your hand: (r = rock, p = paper, s = scissor) ");
                         secondPlayerMove = getComputerMove();
                         System.out.println(secondPlayerMove);
                         break;
                     case "multi":
-                        System.out.println(firstPlayerName + ": play your hand: (r = rock, p = paper, s = scissor) ");
-                        firstPlayerMove = getPlayerMove();
                         System.out.println(secondPlayerName + ": play your hand: (r = rock, p = paper, s = scissor) ");
                         secondPlayerMove = getPlayerMove();
                         break;
@@ -109,6 +118,7 @@ public class RockPaperScissor {
 
                  //calculate the final result when playing based on individual move
                 //if player decided to get result by set, this block of code will not execute
+                //***** better to make a method, will do it later
                 if((setOrIndividualMove.equals("ind")) && (j == (numberOfIndividualMove-1))){
                     if(firstPlayerMoveScore == secondPlayerMoveScore){
                         System.out.println("Final Result: You both tied");
@@ -146,14 +156,15 @@ public class RockPaperScissor {
 
 
             //check and print the final winner when calculating result by set
-            // if player decide to get result by individual move, this block of code will nit execute
+            // if player decide to get result by individual move, this block of code will be executed
+            //***** better to make a method, will do it later
             if((setOrIndividualMove.equals("set")) && (i == (numberOfSet-1))){
                 if(firstPlayerSetScore == secondPlayerSetScore){
                     System.out.println("Final Result: You both tied");
                     System.out.println("****************");
                     System.out.println("As you tied, you have to play a penalty move to find the winner");
                     System.out.println("lets play the penalty move");
-                    i = i -1; // this will force the loop to loop 1 time more to find out the winner
+                    i = i -1; // this will force the "for (int i = 0; i < numberOfSet; i++)" loop to loop 1 time more to find out the winner
                     System.out.println( firstPlayerName+ " = " + firstPlayerSetScore + " : " + secondPlayerName + " = " + secondPlayerSetScore );
                 } else if(firstPlayerSetScore > secondPlayerSetScore){
                     System.out.println("Final Result: Congratulations " + firstPlayerName + "!");
@@ -168,7 +179,8 @@ public class RockPaperScissor {
         } // end of "for (int i = 0; i < numberOfSet; i++)"
 
 
-    } // end of "public static void main(String[] args)"
+    } // end of main method
+
 
     //method to get player move in the system
     //method will also make sure that user type only r/s/p
@@ -186,7 +198,7 @@ public class RockPaperScissor {
         return playerMove;
     }
 
-    // to get compute move in the system
+    // to get computer move in the system
     public static String getComputerMove(){
         String computerMove = "";
         String[] moveOptions = {"r", "s", "p"};
@@ -260,4 +272,4 @@ public class RockPaperScissor {
     }
 
 
-}// end of "public class RockPaperScissorNazmul"
+}// end of class "RockPaperScissor"
